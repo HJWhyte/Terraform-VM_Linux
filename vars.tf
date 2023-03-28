@@ -1,18 +1,17 @@
 variable "hub_resource_group" {
-    description = "Name of the hub resource group"
-    value = string
+  description = "Name of the hub resource group"
+  type       = string
 }
 
 variable "vm_resource_group" {
-    description = "Name of the vm resource group"
-    value = string
+  description = "Name of the vm resource group"
+  type       = string
 }
 
 variable "sku_size" {
     description = "VM Size"
-    value = string
+    type = string
 }
-
 
 variable "project" {
   description = "The name of the project"
@@ -41,5 +40,20 @@ variable "admin_username" {
 
 variable "network_interface_name" {
     description = "The name of the network interface"
+    type = string
+}
+
+variable "virtual_network" {
+    description = "The name of the virtual network"
+    type = string
+}
+
+variable "subnet_id" {
+    description = "Subnet ID"
+    type = string 
+}
+
+variable "filepath" {
+    description = "Key file path"
     type = string
 }

@@ -1,6 +1,7 @@
 locals {
   vm_name = format("vm-%s-%s-%s-%03d", var.pod, var.project, var.environment, var.instance)
-
+  network_interface_name = format("net-%s-%s-%s-%03d", var.pod, var.project, var.environment, var.instance)
+  ip_config_name = format("ip-%s-%s-%s-%03d", var.pod, var.project, var.environment, var.instance)
 }
 
 data "azurerm_resource_group" "hub" {
@@ -11,19 +12,15 @@ data "azurerm_resource_group" "vm_rg" {
   name = var.vm_resource_group
 }
 
-data "azurerm_virtual_network" "example" {
-  name                = var.virtual_network
-  resource_group_name = data.azurerm_resource_group.hub.name
-}
-
 resource "azurerm_network_interface" "example" {
-  name                = var.network_interface_name
+  name                = local.network_interface_name
   location            = data.azurerm_resource_group.vm_rg.location
   resource_group_name = data.azurerm_resource_group.vm_rg.name
 
   ip_configuration {
-    name                 = 
-    public_ip_address_id =                   
+    name = local.ip_config_name
+    subnet_id = var.subnet_id
+    private_ip_address_allocation = "Dynamic" 
   }
 }
 
@@ -34,11 +31,12 @@ resource "azurerm_linux_virtual_machine" "example" {
     location = data.azurerm_resource_group.vm_rg.location
     size = var.sku_size
 
-    network_interface_ids = 
+    network_interface_ids = [azurerm_network_interface.example.id]
 
     admin_username = var.admin_username
     admin_ssh_key {
-      
+      public_key = file(var.filepath)
+      username = var.admin_username
     }
 
     os_disk {
@@ -53,3 +51,4 @@ resource "azurerm_linux_virtual_machine" "example" {
     version   = "latest"
     }
 }
+
